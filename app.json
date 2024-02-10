@@ -10,7 +10,7 @@
       [
         "react-native-auth0",
         {
-          "domain": "{yourDomain}"
+          "domain": "dev-trxx3id6u1wwgk42.us.auth0.com"
         }
       ]
     ],

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 const RequestPage = () => {
   const [requestedItem, setRequestedItem] = useState('');
   const [requestedPrice, setRequestedPrice] = useState('');
 
   const handleSubmit = () => {
-    // Assuming your Flask API is running on localhost and port 5000
-    // For testing on a device, replace localhost with your computer's IP address or ngrok URL
+    // Replace 'http://localhost:5000/make_request' with your actual Flask server URL
+    // When testing on a device, use your network IP or ngrok URL instead of localhost
     const url = 'http://172.21.82.182:5000/api/make_request';
     const customer_id = 1; // Hardcoded as per your requirement
 
@@ -22,9 +22,16 @@ const RequestPage = () => {
         customer_id: customer_id,
       }),
     })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
+    .then(() => {
+      Alert.alert("Success", "Request submitted successfully.");
+      // Optionally reset the form fields here
+      setRequestedItem('');
+      setRequestedPrice('');
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      Alert.alert("Error", "Failed to submit request.");
+    });
   };
 
   return (

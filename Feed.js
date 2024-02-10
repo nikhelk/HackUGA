@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
 
-const Feed = () => {
+const Feed = ({ navigation }) => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    fetch('http://172.21.82.182:5000/api/feed') // Adjust the URL as necessary
+    // Adjust the URL as necessary
+    fetch('http://172.21.82.182:5000/api/feed') 
       .then((response) => response.json())
       .then((data) => setItems(data))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
+  const goToGiveOrderPage = () => {
+    navigation.navigate('GiveStatusPage'); // Ensure 'GiveStatusPage' is correctly defined in your navigation stack
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      {items.map((item, index) => (
-        <View key={index} style={styles.item}>
-          <Text style={styles.text}>Date Requested: {item.requested}</Text>
-          <Text style={styles.text}>Item: {item.item}</Text>
-          <Text style={styles.text}>Cost: ${item.cost.toFixed(2)}</Text>
-          <Text style={styles.text}>Customer ID: {item.customer_id}</Text>
-        </View>
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <FlatList
+        data={items} // Changed from 'feed' to 'items' to match the state variable name
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.text}>Item: {item.item}</Text>
+            <Text style={styles.text}>Cost: {item.cost}</Text>
+            <Text style={styles.text}>Customer ID: {item.customer_id}</Text>
+            <Button title="Fill Order" onPress={goToGiveOrderPage} />
+          </View>
+        )}
+      />
+    </View>
   );
 };
 

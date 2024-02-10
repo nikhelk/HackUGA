@@ -60,7 +60,7 @@ def display_feed():
     # Your existing Python logic to fetch and prepare the feed data
     return json_string
 
-app.route('/api/make_request', methods=['POST'])
+@app.route('/api/make_request', methods=['POST'])
 def make_request():
     print("making request")
     data = request.json
@@ -82,7 +82,7 @@ def make_request():
     conn.commit()
     conn.close()
 
-    return '', 204  # Return an empty response with a 204 No Content status
+    return ''
 
 def bruh():
     return 0

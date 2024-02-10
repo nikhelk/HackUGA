@@ -1,69 +1,44 @@
-import React from 'react';
-import {Alert, Button, StyleSheet, Text, View} from 'react-native';
-import {useAuth0, Auth0Provider} from 'react-native-auth0';
-import config from './auth0-configuration';
+import React, { useState } from 'react';
 
-const Home = () => {
-  const {authorize, clearSession, user, error, getCredentials, isLoading} = useAuth0();
+function App() {
+  const [text, setText] = useState('');
+  const [cost, setCost] = useState('');
+  const [showBlankPage, setShowBlankPage] = useState(false);
 
-  const onLogin = async () => {
-    try {
-      await authorize();
-      let credentials = await getCredentials();
-      Alert.alert('AccessToken: ' + credentials.accessToken);
-    } catch (e) {
-      console.log(e);
-    }
+  const handleSubmit = () => {
+    // Handle submission logic here
+    console.log('Text:', text);
+    console.log('Cost:', cost);
   };
 
-  const loggedIn = user !== undefined && user !== null;
-
-  const onLogout = async () => {
-    try {
-      await clearSession();
-    } catch (e) {
-      console.log('Log out cancelled');
-    }
+  const handleToggle = () => {
+    setShowBlankPage(!showBlankPage);
   };
 
-  if (isLoading) {
-    return <View style={styles.container}><Text>Loading</Text></View>;
-  }
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}> Auth0Sample - Login </Text>
-      {user && <Text>You are logged in as {user.name}</Text>}
-      {!user && <Text>You are not logged in</Text>}
-      {error && <Text>{error.message}</Text>}
-      <Button
-        onPress={loggedIn ? onLogout : onLogin}
-        title={loggedIn ? 'Log Out' : 'Log In'}
-      />
-    </View>
+    <div>
+      <h1>What are you looking for today?</h1>
+      <div>
+        <label>
+          Item
+          <input type="text" value={text} onChange={e => setText(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Cost:
+          <input type="number" value={cost} onChange={e => setCost(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <button onClick={handleSubmit}>Submit</button>
+      </div>
+      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'lightgray', padding: '10px' }}>
+        <button onClick={handleToggle}>{showBlankPage ? 'Show Form Page' : 'Show Blank Page'}</button>
+      </div>
+      {showBlankPage && <div style={{ height: 'calc(100vh - 60px)', background: 'white' }}>Blank Page</div>}
+    </div>
   );
-};
-
-const App = () => {
-  return (
-    <Auth0Provider domain={config.domain} clientId={config.clientId}>
-      <Home />
-    </Auth0Provider>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  header: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-});
+}
 
 export default App;

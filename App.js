@@ -5,7 +5,7 @@ import Feed from './Feed';
 import RequestPage from './RequestPage';
 
 const Stack = createStackNavigator();
-
+console.log("beginning")
 function MyStack() {
   return (
     <Stack.Navigator>

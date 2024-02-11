@@ -1,38 +1,53 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
-const RequestPage = () => {
+const RequestPage = ({ navigation }) => {
   const [requestedItem, setRequestedItem] = useState('');
   const [requestedPrice, setRequestedPrice] = useState('');
-
+  const goToReceiveStatusPage = (customerId, item, id, price) => {
+    navigation.navigate('ReceiveStatusPage', {
+      customerId: customerId,
+      item: item,
+      id: id,
+      price: price,
+    });
+  };
   const handleSubmit = () => {
     // Replace 'http://localhost:5000/make_request' with your actual Flask server URL
     // When testing on a device, use your network IP or ngrok URL instead of localhost
     const url = 'http://172.21.82.182:5000/api/make_request';
     const customer_id = 1; // Hardcoded as per your requirement
 
+
     fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
         requested_item: requestedItem,
         requested_price: requestedPrice,
         customer_id: customer_id,
       }),
-    })
-    .then(() => {
-      Alert.alert("Success", "Request submitted successfully.");
-      // Optionally reset the form fields here
-      setRequestedItem('');
-      setRequestedPrice('');
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      Alert.alert("Error", "Failed to submit request.");
-    });
-  };
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('New ID:', data.new_id);
+
+        navigation.navigate('ReceiveStatusPage', {
+            newId: data.new_id,
+            // Include any other data you wish to pass to ReceiveStatusPage
+            requestedItem: requestedItem,
+            requestedPrice: requestedPrice,
+            customerId: 1, // or the specific ID used
+          });
+
+
+        // You can now use data.new_id as needed in your app
+      })
+      .catch(error => console.error('Error:', error));
+    };
+
 
   return (
     <View style={styles.container}>

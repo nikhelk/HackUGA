@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, RefreshControl, Button, StyleSheet } from 'react-native';
-
+import { useFocusEffect } from '@react-navigation/native';
 const Feed = ({ navigation }) => {
   const [items, setItems] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -12,6 +12,7 @@ const Feed = ({ navigation }) => {
       .then((response) => response.json())
       .then((data) => {
         setItems(data);
+        console.log(data[0])
         setRefreshing(false); // Reset refreshing state
       })
       .catch((error) => {
@@ -24,8 +25,25 @@ const Feed = ({ navigation }) => {
     fetchFeed();
   }, []);
 
-  const goToGiveOrderPage = (customerId) => {
-    navigation.navigate('GiveStatusPage', { customerId });
+  const goToGiveOrderPage = (id) =>  {
+    console.log(id)
+    fetch('http://172.21.82.182:5000/api/fill_order', {
+      method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      body: JSON.stringify({
+        param1: id
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+      })
+      .catch(error => {
+        console.error('Error fetching status:', error);
+      });
+
+    navigation.navigate('GiveStatusPage', { id });
   };
 
   return (
@@ -43,7 +61,7 @@ const Feed = ({ navigation }) => {
           <Text style={styles.text}>Item: {item.item}</Text>
           <Text style={styles.text}>Cost: {item.cost}</Text>
           <Text style={styles.text}>Customer ID: {item.customer_id}</Text>
-          <Button title="Fill Order" onPress={() => goToGiveOrderPage(item.customer_id)} />
+          <Button title="Fill Order" onPress={() => goToGiveOrderPage(item.id)} />
         </View>
       ))}
     </ScrollView>

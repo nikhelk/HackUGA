@@ -82,9 +82,51 @@ def make_request():
     conn.commit()
     conn.close()
 
-    return ''
+        # Get the ID of the last inserted row
+    new_id = c.lastrowid
+    # Return the new ID to the caller
+    return jsonify({'new_id': new_id})
 
-def bruh():
-    return 0
+@app.route('/api/fill_order',methods=['POST'])
+def fill_order():
+    print("deleting ")
+    data = request.json
+    id = data.get('param1')
+    
+    conn = sqlite3.connect('sales.db')
+    c = conn.cursor()
+    print(id)
+    # Connect to the SQLite database
+
+    # Select all rows from the orders table
+    c.execute('DELETE FROM sales_records WHERE id = (?)', (id,))
+    c.execute('SELECT * FROM sales_records WHERE id = (?)', (id,))
+    rows = c.fetchall()
+    print((rows))
+    rows = c.fetchall()
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'status': len(rows)})
+    
+@app.route('/api/get_updated_status', methods=['POST'])
+def get_updated_status():
+    print("bruh")
+    data = request.json
+    requested_item = data.get('id')
+    
+    conn = sqlite3.connect('sales.db')
+    c = conn.cursor()
+    id = request.args.get('id')
+    print(id)
+    string_id = str(id)
+    # Connect to the SQLite database
+
+    # Select all rows from the orders table
+    c.execute('SELECT * FROM sales_records WHERE id = (?)', (requested_item,))
+    rows = c.fetchall()
+    print((rows))
+    conn.close()
+    return jsonify({'status': len(rows)})
 if __name__ == '__main__':
     app.run(host="172.21.82.182", port=5000, debug=True)

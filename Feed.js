@@ -1,51 +1,68 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, RefreshControl, Button, StyleSheet } from 'react-native';
 
 const Feed = ({ navigation }) => {
   const [items, setItems] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
+  const fetchFeed = () => {
+    setRefreshing(true);
     // Adjust the URL as necessary
     fetch('http://172.21.82.182:5000/api/feed') 
       .then((response) => response.json())
-      .then((data) => setItems(data))
-      .catch((error) => console.error('Error fetching data:', error));
+      .then((data) => {
+        setItems(data);
+        setRefreshing(false); // Reset refreshing state
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setRefreshing(false); // Reset refreshing state even on error
+      });
+  };
+
+  useEffect(() => {
+    fetchFeed();
   }, []);
 
-  const goToGiveOrderPage = () => {
-    navigation.navigate('GiveStatusPage'); // Ensure 'GiveStatusPage' is correctly defined in your navigation stack
+  const goToGiveOrderPage = (customerId) => {
+    navigation.navigate('GiveStatusPage', { customerId });
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={items} // Changed from 'feed' to 'items' to match the state variable name
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.text}>Item: {item.item}</Text>
-            <Text style={styles.text}>Cost: {item.cost}</Text>
-            <Text style={styles.text}>Customer ID: {item.customer_id}</Text>
-            <Button title="Fill Order" onPress={goToGiveOrderPage} />
-          </View>
-        )}
-      />
-    </View>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={fetchFeed}
+        />
+      }
+    >
+      {items.map((item) => (
+        <View key={item.id.toString()} style={styles.item}>
+          <Text style={styles.text}>Item: {item.item}</Text>
+          <Text style={styles.text}>Cost: {item.cost}</Text>
+          <Text style={styles.text}>Customer ID: {item.customer_id}</Text>
+          <Button title="Fill Order" onPress={() => goToGiveOrderPage(item.customer_id)} />
+        </View>
+      ))}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
   },
   item: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#cccccc',
+    marginBottom: 10,
   },
   text: {
     fontSize: 16,
+    marginBottom: 5,
   },
 });
 

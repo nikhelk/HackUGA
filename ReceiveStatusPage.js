@@ -12,7 +12,7 @@ const GiveStatusPage = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>User {customerId}</Text>
+      <Text style={styles.text}>Pendings</Text>
       <Button title="Confirm" onPress={handleConfirm} />
     </View>
   );

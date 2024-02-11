@@ -4,6 +4,7 @@ import HomeScreen from './HomeScreen';
 import Feed from './Feed';
 import RequestPage from './RequestPage';
 import GiveStatusPage from './GiveStatusPage'
+import ReceiveStatusPage from './ReceiveStatusPage'
 
 const Stack = createStackNavigator();
 console.log("beginning")
@@ -14,6 +15,7 @@ function MyStack() {
       <Stack.Screen name="Feed" component={Feed} />
       <Stack.Screen name="RequestPage" component={RequestPage} />
       <Stack.Screen name="GiveStatusPage" component={GiveStatusPage} />
+      <Stack.Screen name="ReceiveStatusPage" component={ReceiveStatusPage} />
     </Stack.Navigator>
   );
 }

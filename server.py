@@ -17,13 +17,13 @@ c.execute('''CREATE TABLE IF NOT EXISTS sales_records
               requested TEXT,
               item TEXT,
               cost REAL,
-              customer_id INTEGER)''')
+              customer_id TEXT)''')
 
 # Insert default values
 default_values = [
-    (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Laptop', 1200.00, 1),
-    (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Smartphone', 800.00, 2),
-    (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Headphones', 150.00, 3)
+    (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Salt', 4.00, "Bob"),
+    (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Salsa', 5.00, "Alice"),
+    (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Pepper', 3.00, "Fred")
 ]
 
 c.executemany('INSERT INTO sales_records (requested, item, cost, customer_id) VALUES (?, ?, ?, ?)', default_values)
@@ -41,16 +41,18 @@ def display_feed():
     # Connect to the SQLite database
     
     # Select all rows from the orders table
-    c.execute('SELECT * FROM sales_records')
+    c.execute('SELECT * FROM sales_records ORDER BY requested DESC;')
     
     # Dynamically get column names from the cursor description
     columns = [description[0] for description in c.description]
     
     # Fetch all rows from the query
     rows = c.fetchall()
+    print(rows[0])
     
     # Convert the row data to JSON format
     json_data = [dict(zip(columns, row)) for row in rows]
+    
     
     # Convert to JSON string (if needed for printing or sending as a response)
     json_string = json.dumps(json_data, indent=4)

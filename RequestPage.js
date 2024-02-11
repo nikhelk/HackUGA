@@ -16,7 +16,16 @@ const RequestPage = ({ navigation }) => {
     // Replace 'http://localhost:5000/make_request' with your actual Flask server URL
     // When testing on a device, use your network IP or ngrok URL instead of localhost
     const url = 'http://172.21.82.182:5000/api/make_request';
-    const customer_id = 1; // Hardcoded as per your requirement
+    function getRandomInt(min, max) {
+      min = Math.ceil(min); // Ensure the min is rounded up to the nearest whole number
+      max = Math.floor(max); // Ensure the max is rounded down to the nearest whole number
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    const int = getRandomInt(0,11)
+    let customer_id = "Nikhel"
+    if (int <= 50) {
+      customer_id = "Ashima"; // Hardcoded as per your requirement
+    }
 
 
     fetch(url, {
@@ -39,7 +48,7 @@ const RequestPage = ({ navigation }) => {
             // Include any other data you wish to pass to ReceiveStatusPage
             requestedItem: requestedItem,
             requestedPrice: requestedPrice,
-            customerId: 1, // or the specific ID used
+            customerId: customer_id, // or the specific ID used
           });
 
 
